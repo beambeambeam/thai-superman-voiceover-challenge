@@ -32,7 +32,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useServerAction } from "zsa-react";
 import { calculateVoiceSim } from "@/app/choice/[id]/action";
 import Recorder from "@/components/recorder";
-import { ChevronLeft, ChevronLeftIcon } from "lucide-react";
+import { ChevronLeftIcon } from "lucide-react";
+import confetti from "canvas-confetti";
 
 const formSchema = z.object({
   audio: z.instanceof(File),
@@ -50,7 +51,37 @@ function ChoiceId() {
     resolver: zodResolver(formSchema),
   });
 
-  const { isPending, execute, data } = useServerAction(calculateVoiceSim);
+  const { isPending, execute, data } = useServerAction(calculateVoiceSim, {
+    onSuccess: () => {
+      // Fire confetti fireworks
+      const duration = 5 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      const randomInRange = (min: number, max: number) =>
+        Math.random() * (max - min) + min;
+
+      const interval = window.setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+        });
+      }, 250);
+    },
+  });
 
   const handleEnded = () => {
     setReplayCount((prev) => {
@@ -105,6 +136,28 @@ function ChoiceId() {
             <span className="text-foreground text-lg font-bold">
               Hang tight, magic is happening ✨
             </span>
+          </div>
+        </div>
+      )}
+
+      {data && (
+        <div
+          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-sm"
+          style={{
+            borderRadius: "inherit",
+            boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
+            borderImage: "inherit",
+          }}
+        >
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-lg font-bold text-background">
+              You got {data.score}!
+            </span>
+            <Link href="/choice">
+              <Button variant="default" effect="shineHover">
+                Checkout others challenge
+              </Button>
+            </Link>
           </div>
         </div>
       )}
