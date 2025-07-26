@@ -30,6 +30,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { useServerAction } from "zsa-react";
 import { calculateVoiceSim } from "@/app/choice/[id]/action";
+import Recorder from "@/components/recorder";
 
 const formSchema = z.object({
   audio: z.instanceof(File),
@@ -144,16 +145,7 @@ function ChoiceId() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Input
-                    type="file"
-                    name={field.name}
-                    ref={field.ref}
-                    onBlur={field.onBlur}
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      field.onChange(file);
-                    }}
-                  />
+                  <Recorder {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

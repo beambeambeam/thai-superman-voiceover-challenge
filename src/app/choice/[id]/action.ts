@@ -21,6 +21,8 @@ export const calculateVoiceSim = createServerAction()
       throw new Error("Choice not found");
     }
 
+    console.log(input);
+
     return {
       score: 100.0,
     };
