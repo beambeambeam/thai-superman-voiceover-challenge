@@ -134,7 +134,7 @@ function ChoiceId() {
             e.preventDefault();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="space-y-8"
+          className="flex flex-col items-center justify-center"
         >
           <FormField
             control={form.control}
