@@ -1,5 +1,6 @@
 import { CHOICE } from "@/app/choice/choice";
 import { Button } from "@/components/ui/button";
+import { ChevronLeftIcon } from "lucide-react";
 import Link from "next/link";
 
 function Choice() {
@@ -11,6 +12,11 @@ function Choice() {
           <Button effect="shineHover">{c.label}</Button>
         </Link>
       ))}
+      <Link href="/">
+        <Button size="icon" variant="ghost" effect="ringHover">
+          <ChevronLeftIcon />
+        </Button>
+      </Link>
     </div>
   );
 }

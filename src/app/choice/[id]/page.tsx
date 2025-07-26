@@ -92,15 +92,13 @@ function ChoiceId() {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center flex-col gap-2">
-      <div className="grid grid-cols-[auto_1fr_auto] w-full max-w-[700px]">
+      <div className="w-full max-w-[700px] flex items-center justify-center gap-2">
         <Link href="/choice">
-          <Button size="icon" effect="shineHover">
+          <Button size="icon" variant="ghost" effect="ringHover">
             <ChevronLeftIcon />
           </Button>
         </Link>
-        <h1 className="w-full text-center text-3xl font-bold">
-          {choice.label}
-        </h1>
+        <h1 className="text-3xl font-bold">{choice.label}</h1>
       </div>
 
       <div className="w-[90vw] max-w-[700px] relative aspect-video">
@@ -129,7 +127,10 @@ function ChoiceId() {
         {choice.lyrics}
       </div>
 
-      <MediaPlayer className="h-15 w-[700px]" onEnded={handleEnded}>
+      <MediaPlayer
+        className="h-15 w-[700px] max-w-screen"
+        onEnded={handleEnded}
+      >
         <MediaPlayerAudio
           className="sr-only"
           ref={audioRef}
@@ -160,7 +161,7 @@ function ChoiceId() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Recorder {...field} />
+                  <Recorder {...field} className="w-[70vw]" />
                 </FormControl>
                 <FormMessage />
               </FormItem>

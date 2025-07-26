@@ -192,7 +192,7 @@ const Recorder: React.FC<RecorderProps> = ({
   return (
     <div
       className={cn(
-        "flex h-16 rounded-md relative w-full items-center justify-center gap-2 max-w-5xl",
+        "flex h-16 rounded-md relative w-full items-center justify-center gap-2",
         { "border p-1": isRecording, "border-none p-0": !isRecording },
         className
       )}
@@ -208,13 +208,15 @@ const Recorder: React.FC<RecorderProps> = ({
           timerClassName={timerClassName}
         />
       ) : null}
+
       <canvas
         ref={canvasRef}
         className={`h-full w-full bg-background ${
           !isRecording ? "hidden" : "flex"
         }`}
       />
-      <div className="flex gap-2">
+
+      <div className="flex gap-2 items-center justify-center">
         {isRecording ? (
           <Button
             onClick={handleReset}
@@ -234,8 +236,9 @@ const Recorder: React.FC<RecorderProps> = ({
           <Mic2Icon />
         </Button>
       </div>
+
       {file && audioUrl && (
-        <div className="w-full flex justify-center mt-2">
+        <div className="w-fit flex justify-center">
           <audio controls src={audioUrl} />
         </div>
       )}
@@ -264,7 +267,7 @@ const Timer = React.memo(
     return (
       <div
         className={cn(
-          "items-center -top-12 left-0 absolute justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex",
+          "items-center justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex",
           timerClassName
         )}
       >
