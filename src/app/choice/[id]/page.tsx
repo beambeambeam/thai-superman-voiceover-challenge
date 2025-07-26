@@ -125,6 +125,10 @@ function ChoiceId() {
         )}
       </div>
 
+      <div className="bg-accent p-4 text-2xl font-bold border-l-4 border-foreground italic">
+        {choice.lyrics}
+      </div>
+
       <MediaPlayer className="h-15 w-[700px]" onEnded={handleEnded}>
         <MediaPlayerAudio
           className="sr-only"
