@@ -83,6 +83,8 @@ function ChoiceId() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
     formData.append("audio", values.audio);
+    formData.append("id", params.id);
+
     await execute(formData);
   }
 
