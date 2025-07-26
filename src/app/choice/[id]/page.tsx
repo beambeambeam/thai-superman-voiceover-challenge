@@ -12,7 +12,28 @@ import {
   MediaPlayerVolume,
 } from "@/components/ui/media-player";
 import Image from "next/image";
+
 import React, { useState, useRef } from "react";
+import z from "zod";
+
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useForm } from "react-hook-form";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { useServerAction } from "zsa-react";
+import { calculateVoiceSim } from "@/app/choice/[id]/action";
+
+const formSchema = z.object({
+  audio: z.instanceof(File),
+});
 
 function ChoiceId() {
   const params = useParams<{ id: string }>();
@@ -21,6 +42,13 @@ function ChoiceId() {
   const [replayCount, setReplayCount] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  const { isPending, execute, data, error } =
+    useServerAction(calculateVoiceSim);
 
   const handleEnded = () => {
     setReplayCount((prev) => {
@@ -50,6 +78,17 @@ function ChoiceId() {
         </Link>
       </div>
     );
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const formData = new FormData();
+    formData.append("audio", values.audio);
+    formData.append("message", "hello");
+    const [data, err] = await execute(formData);
+
+    if (err) {
+      return;
+    }
   }
 
   return (
@@ -93,6 +132,33 @@ function ChoiceId() {
           </div>
         </MediaPlayerControls>
       </MediaPlayer>
+
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+          <FormField
+            control={form.control}
+            name="audio"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    type="file"
+                    name={field.name}
+                    ref={field.ref}
+                    onBlur={field.onBlur}
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      field.onChange(file);
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button type="submit">Submit</Button>
+        </form>
+      </Form>
     </div>
   );
 }

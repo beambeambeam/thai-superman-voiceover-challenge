@@ -6,18 +6,17 @@ import { createServerAction } from "zsa";
 export const calculateVoiceSim = createServerAction()
   .input(
     z.object({
-      audio: z.file(),
+      audio: z.instanceof(File),
+      message: z.string(),
     }),
     {
       type: "formData",
     }
   )
-  .output(
-    z.object({
-      score: z.float64(),
-    })
-  )
-  .handler(async () => {
+  .handler(async ({ input }) => {
+    console.log(input.audio.name);
+    console.log(input.message);
+
     return {
       score: 100.0,
     };
