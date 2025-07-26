@@ -8,14 +8,8 @@ import {
   MediaPlayer,
   MediaPlayerAudio,
   MediaPlayerControls,
-  MediaPlayerLoop,
   MediaPlayerPlay,
-  MediaPlayerPlaybackSpeed,
-  MediaPlayerSeek,
-  MediaPlayerSeekBackward,
-  MediaPlayerSeekForward,
   MediaPlayerVolume,
-  MediaPlayerTime, // <-- add this import
 } from "@/components/ui/media-player";
 import Image from "next/image";
 import React, { useState, useRef } from "react";
@@ -81,7 +75,6 @@ function ChoiceId() {
           <source src={choice.mp3} type="audio/mp3" />
         </MediaPlayerAudio>
         <MediaPlayerControls className="flex-col items-start gap-2.5">
-          <MediaPlayerSeek withTime />
           <div className="flex w-full items-center justify-center gap-2">
             <MediaPlayerPlay disabled={isDisabled} />
             <MediaPlayerVolume />
