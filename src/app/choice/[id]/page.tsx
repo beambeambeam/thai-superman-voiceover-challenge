@@ -79,6 +79,16 @@ function ChoiceId() {
           particleCount,
           origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
         });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.5, 0.8), y: Math.random() - 0.2 },
+        });
+        confetti({
+          ...defaults,
+          particleCount,
+          origin: { x: randomInRange(0.4, 0.6), y: Math.random() - 0.2 },
+        });
       }, 250);
     },
   });
@@ -142,7 +152,7 @@ function ChoiceId() {
 
       {data && (
         <div
-          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-sm"
+          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid"
           style={{
             borderRadius: "inherit",
             boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
