@@ -56,17 +56,29 @@ function ChoiceId() {
     <div className="h-screen w-screen flex items-center justify-center flex-col">
       {choice.label}
 
-      <Image
-        src={choice.image}
-        alt={choice.label}
-        width={0}
-        height={0}
-        className="h-auto w-auto max-w-xs max-h-64"
-      />
+      <div className="w-[70vw] relative aspect-video">
+        <Image
+          src={choice.image}
+          alt={choice.label}
+          fill
+          style={{ objectFit: "contain" }}
+          className="h-auto w-auto"
+          quality={100}
+          sizes="(max-width: 1200px) 70vw, 800px"
+          priority
+        />
+      </div>
 
-      <div>{replayCount}/3</div>
+      <div className="flex flex-col gap-2 items-center justify-center">
+        <p>{replayCount}/3</p>
+        {isDisabled && (
+          <div className="text-red-500 mt-2">
+            You have reached the maximum number of replays.
+          </div>
+        )}
+      </div>
 
-      <MediaPlayer className="h-20 w-full" onEnded={handleEnded}>
+      <MediaPlayer className="h-15 w-full" onEnded={handleEnded}>
         <MediaPlayerAudio
           className="sr-only"
           ref={audioRef}
@@ -81,11 +93,6 @@ function ChoiceId() {
           </div>
         </MediaPlayerControls>
       </MediaPlayer>
-      {isDisabled && (
-        <div className="text-red-500 mt-2">
-          You have reached the maximum number of replays.
-        </div>
-      )}
     </div>
   );
 }
