@@ -17,6 +17,7 @@ interface RecorderProps {
   disabled?: boolean;
   className?: string;
   timerClassName?: string;
+  timeLimit?: number;
 }
 
 const padWithLeadingZeros = (num: number, length: number): string => {
@@ -30,6 +31,7 @@ const Recorder: React.FC<RecorderProps> = ({
   disabled = false,
   className,
   timerClassName,
+  timeLimit,
 }) => {
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -93,6 +95,14 @@ const Recorder: React.FC<RecorderProps> = ({
     }
   }, [setFile]);
 
+  const handleStop = useCallback(() => {
+    if (mediaRecorder && isRecording) {
+      mediaRecorder.stop();
+      setIsRecording(false);
+      if (timerTimeout.current) clearTimeout(timerTimeout.current);
+    }
+  }, [mediaRecorder, isRecording]);
+
   const handleStart = useCallback(async () => {
     handleReset();
     if (disabled || isRecording) return;
@@ -123,16 +133,12 @@ const Recorder: React.FC<RecorderProps> = ({
     }
   }, [disabled, isRecording, setFile, handleReset]);
 
-  const handleStop = useCallback(() => {
-    if (mediaRecorder && isRecording) {
-      mediaRecorder.stop();
-      setIsRecording(false);
-      if (timerTimeout.current) clearTimeout(timerTimeout.current);
-    }
-  }, [mediaRecorder, isRecording]);
-
   useEffect(() => {
     if (isRecording) {
+      if (timeLimit && timer >= timeLimit / 1000) {
+        handleStop();
+        return;
+      }
       timerTimeout.current = setTimeout(() => {
         setTimer((t) => t + 1);
       }, 1000);
@@ -140,7 +146,7 @@ const Recorder: React.FC<RecorderProps> = ({
     return () => {
       if (timerTimeout.current) clearTimeout(timerTimeout.current);
     };
-  }, [isRecording, timer]);
+  }, [isRecording, timer, timeLimit, handleStop]);
 
   useEffect(() => {
     if (!canvasRef.current) return;

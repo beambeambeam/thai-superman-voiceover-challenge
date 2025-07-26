@@ -220,6 +220,7 @@ function ChoiceId() {
           <div className="flex w-full items-center justify-center gap-2">
             <MediaPlayerPlay />
             <MediaPlayerSeek withTime />
+            <p className="text-foreground">{choice.time}ms</p>
             <MediaPlayerVolume />
           </div>
         </MediaPlayerControls>
@@ -239,7 +240,11 @@ function ChoiceId() {
             render={({ field }) => (
               <FormItem>
                 <FormControl>
-                  <Recorder {...field} className="w-[70vw]" />
+                  <Recorder
+                    {...field}
+                    className="w-[70vw]"
+                    timeLimit={choice.time}
+                  />
                 </FormControl>
               </FormItem>
             )}
