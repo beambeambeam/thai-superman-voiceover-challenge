@@ -21,12 +21,30 @@ export const calculateVoiceSim = createServerAction()
   )
   .handler(async ({ input }) => {
     const choice = CHOICE.find((c) => c.id === input.id);
-
     if (!choice) {
       throw new Error("Choice not found");
     }
 
+    let score = 0;
+    try {
+      const arrayBuffer = await input.audio.arrayBuffer();
+      const uploadedSize = arrayBuffer.byteLength;
+
+      let refSize = 1;
+      if (choice.mp3) {
+        const res = await fetch(choice.mp3);
+        if (res.ok) {
+          const refBuffer = await res.arrayBuffer();
+          refSize = refBuffer.byteLength;
+        }
+      }
+
+      const diff = Math.abs(uploadedSize - refSize);
+      score = Math.max(0, 100 - (diff / Math.max(refSize, 1)) * 100);
+    } catch (e) {
+      score = 0;
+    }
     return {
-      score: 100.0,
+      score: Math.round(score * 10) / 10,
     };
   });
