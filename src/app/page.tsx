@@ -7,7 +7,7 @@ export default function Home() {
     <div className="w-full h-full flex items-center justify-center flex-col gap-2">
       <p className="text-3xl font-bold">Thai Superman Voiceover Challenge</p>
       <Link href="/choice">
-        <Button>Start</Button>
+        <Button effect="shineHover">Start</Button>
       </Link>
     </div>
   );

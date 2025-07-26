@@ -8,7 +8,7 @@ function Choice() {
       <h1 className="text-3xl font-bold">Choose the challenge</h1>
       {CHOICE.map((c) => (
         <Link href={`/choice/${c.id}`} key={c.id}>
-          <Button>{c.label}</Button>
+          <Button effect="shineHover">{c.label}</Button>
         </Link>
       ))}
     </div>

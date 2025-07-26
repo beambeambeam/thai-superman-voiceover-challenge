@@ -9,6 +9,7 @@ import {
   MediaPlayerAudio,
   MediaPlayerControls,
   MediaPlayerPlay,
+  MediaPlayerSeek,
   MediaPlayerVolume,
 } from "@/components/ui/media-player";
 import Image from "next/image";
@@ -31,6 +32,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useServerAction } from "zsa-react";
 import { calculateVoiceSim } from "@/app/choice/[id]/action";
 import Recorder from "@/components/recorder";
+import { ChevronLeft, ChevronLeftIcon } from "lucide-react";
 
 const formSchema = z.object({
   audio: z.instanceof(File),
@@ -48,8 +50,7 @@ function ChoiceId() {
     resolver: zodResolver(formSchema),
   });
 
-  const { isPending, execute, data, error } =
-    useServerAction(calculateVoiceSim);
+  const { execute } = useServerAction(calculateVoiceSim);
 
   const handleEnded = () => {
     setReplayCount((prev) => {
@@ -90,10 +91,19 @@ function ChoiceId() {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center flex-col">
-      {choice.label}
+    <div className="h-screen w-screen flex items-center justify-center flex-col gap-2">
+      <div className="grid grid-cols-[auto_1fr_auto] w-full max-w-[700px]">
+        <Link href="/choice">
+          <Button size="icon" effect="shineHover">
+            <ChevronLeftIcon />
+          </Button>
+        </Link>
+        <h1 className="w-full text-center text-3xl font-bold">
+          {choice.label}
+        </h1>
+      </div>
 
-      <div className="w-[70vw] relative aspect-video">
+      <div className="w-[90vw] max-w-[700px] relative aspect-video">
         <Image
           src={choice.image}
           alt={choice.label}
@@ -101,21 +111,21 @@ function ChoiceId() {
           style={{ objectFit: "contain" }}
           className="h-auto w-auto"
           quality={100}
-          sizes="(max-width: 1200px) 70vw, 800px"
+          sizes="(max-width: 900px) 99vw, 700px"
           priority
         />
       </div>
 
-      <div className="flex flex-col gap-2 items-center justify-center">
-        <p>{replayCount}/3</p>
+      <div className="flex gap-2 items-center justify-center">
+        {replayCount}/3{" "}
         {isDisabled && (
-          <div className="text-red-500 mt-2">
+          <div className="text-destructive">
             You have reached the maximum number of replays.
           </div>
         )}
       </div>
 
-      <MediaPlayer className="h-15 w-full" onEnded={handleEnded}>
+      <MediaPlayer className="h-15 w-[700px]" onEnded={handleEnded}>
         <MediaPlayerAudio
           className="sr-only"
           ref={audioRef}
@@ -125,7 +135,8 @@ function ChoiceId() {
         </MediaPlayerAudio>
         <MediaPlayerControls className="flex-col items-start gap-2.5">
           <div className="flex w-full items-center justify-center gap-2">
-            <MediaPlayerPlay disabled={isDisabled} />
+            <MediaPlayerPlay />
+            <MediaPlayerSeek withTime />
             <MediaPlayerVolume />
           </div>
         </MediaPlayerControls>
