@@ -9,10 +9,18 @@ type CHOICE = {
 export const CHOICE: CHOICE[] = [
   {
     id: "1",
-    label: "Mibomba",
+    label: "Challenge 1",
     image:
-      "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6YdhGhTDRLm2uiVcSwUxeQHRdZWFpX1vDgny8Tjq",
-    lyrics: "MIBOMBA MIBOMBA",
-    mp3: "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6Ydh6oE7gSWT0A2GFRb3mNUqzJen5XHlxi7vLuhC",
+      "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6YdhZlogAaY0J4KN8G5XFjx6OmivSPUIBduDqHW1",
+    lyrics: "ที่จะทำความดี",
+    mp3: "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6Ydhzi2qA0sa6YdhATJFIlj7Bq3NStZoeviakV0K",
+  },
+  {
+    id: "2",
+    label: "Challenge 2",
+    image:
+      "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6YdhQs5wlLGnFk36gKVozxylJcwID2Ap1MSahZXW",
+    lyrics: "เห้เพื่อนดูนี้น่ะ",
+    mp3: "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6Ydh8LTPe0SQHLVSKsaYFzCRnOldAIi7WDTkZ601",
   },
 ];
