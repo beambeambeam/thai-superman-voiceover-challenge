@@ -50,7 +50,7 @@ function ChoiceId() {
     resolver: zodResolver(formSchema),
   });
 
-  const { execute } = useServerAction(calculateVoiceSim);
+  const { isPending, execute, data } = useServerAction(calculateVoiceSim);
 
   const handleEnded = () => {
     setReplayCount((prev) => {
@@ -91,7 +91,24 @@ function ChoiceId() {
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center flex-col gap-2">
+    <div className="h-screen w-screen flex items-center justify-center flex-col gap-2 relative">
+      {isPending && (
+        <div
+          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-sm"
+          style={{
+            borderRadius: "inherit",
+            boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
+            borderImage: "inherit",
+          }}
+        >
+          <div className="flex flex-col items-center gap-2">
+            <span className="text-foreground text-lg font-bold">
+              Hang tight, magic is happening ✨
+            </span>
+          </div>
+        </div>
+      )}
+
       <div className="w-full max-w-[700px] flex items-center justify-center gap-2">
         <Link href="/choice">
           <Button size="icon" variant="ghost" effect="ringHover">
@@ -163,11 +180,12 @@ function ChoiceId() {
                 <FormControl>
                   <Recorder {...field} className="w-[70vw]" />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
-          <Button type="submit">Submit</Button>
+          <Button type="submit" disabled={!form.formState.isValid}>
+            Submit
+          </Button>
         </form>
       </Form>
     </div>
