@@ -24,12 +24,10 @@ function ChoiceId() {
   const params = useParams<{ id: string }>();
   const choice = CHOICE.find((c) => c.id === params.id);
 
-  // Add replay state
   const [replayCount, setReplayCount] = useState(0);
   const [isDisabled, setIsDisabled] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Handler for when audio ends
   const handleEnded = () => {
     setReplayCount((prev) => {
       const next = prev + 1;
@@ -40,7 +38,6 @@ function ChoiceId() {
     });
   };
 
-  // Handler for play: prevent play if disabled
   const handlePlay = (e: React.SyntheticEvent) => {
     if (isDisabled) {
       e.preventDefault();
