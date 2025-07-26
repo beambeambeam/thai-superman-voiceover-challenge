@@ -17,14 +17,7 @@ import Image from "next/image";
 import React, { useState, useRef } from "react";
 import z from "zod";
 
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -34,6 +27,7 @@ import { calculateVoiceSim } from "@/app/choice/[id]/action";
 import Recorder from "@/components/recorder";
 import { ChevronLeftIcon } from "lucide-react";
 import confetti from "canvas-confetti";
+import { NumberTicker } from "@/components/magicui/number-ticker";
 
 const formSchema = z.object({
   audio: z.instanceof(File),
@@ -152,7 +146,7 @@ function ChoiceId() {
 
       {data && (
         <div
-          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid"
+          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-xs"
           style={{
             borderRadius: "inherit",
             boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
@@ -161,7 +155,11 @@ function ChoiceId() {
         >
           <div className="flex flex-col items-center gap-2">
             <span className="text-lg font-bold text-background">
-              You got {data.score}!
+              You got{" "}
+              <NumberTicker
+                value={data.score}
+                className="whitespace-pre-wrap text-8xl font-medium tracking-tighter text-white"
+              />
             </span>
             <Link href="/choice">
               <Button variant="default" effect="shineHover">
