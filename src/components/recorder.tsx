@@ -29,7 +29,14 @@ export const Recorder: React.FC<RecorderProps> = ({
     onChange,
   });
 
+  const handleReset = () => {
+    setFile(null);
+    setAudioUrl(null);
+  };
+
   const handleStart = useCallback(async () => {
+    handleReset();
+
     if (disabled || recording) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -61,17 +68,14 @@ export const Recorder: React.FC<RecorderProps> = ({
     }
   }, [mediaRecorder, recording]);
 
-  const handleReset = () => {
-    setFile(null);
-    setAudioUrl(null);
-  };
-
   return (
     <div className="flex flex-col gap-2 items-center">
       <Button
         type="button"
         size="icon"
-        onClick={recording ? handleStop : handleStart}
+        onClick={async () => {
+          recording ? handleStop() : handleStart();
+        }}
         disabled={disabled}
         variant={recording ? "ghost" : "outline"}
       >
