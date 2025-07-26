@@ -211,7 +211,7 @@ function estimateFundamentalFrequency(
     period++
   ) {
     let correlation = 0;
-    let samples = Math.min(period * 3, channelData.length - period);
+    const samples = Math.min(period * 3, channelData.length - period);
 
     for (let i = 0; i < samples; i++) {
       correlation += channelData[i] * channelData[i + period];
