@@ -16,6 +16,7 @@ import {
   MediaPlayerSeekForward,
   MediaPlayerVolume,
 } from "@/components/ui/media-player";
+import Image from "next/image";
 
 function ChoiceId() {
   const params = useParams<{ id: string }>();
@@ -36,12 +37,17 @@ function ChoiceId() {
     <div className="h-screen w-screen flex items-center justify-center flex-col">
       {choice.label}
 
+      <Image
+        src={choice.image}
+        alt={choice.label}
+        width={0}
+        height={0}
+        className="h-auto w-auto max-w-xs max-h-64"
+      />
+
       <MediaPlayer className="h-20 w-full">
         <MediaPlayerAudio className="sr-only">
-          <source
-            src="https://1i39q4zekz.ufs.sh/f/zi7vM2Za6Ydh6oE7gSWT0A2GFRb3mNUqzJen5XHlxi7vLuhC"
-            type="audio/mp3"
-          />
+          <source src={choice.mp3} type="audio/mp3" />
         </MediaPlayerAudio>
         <MediaPlayerControls className="flex-col items-start gap-2.5">
           <MediaPlayerSeek withTime />
