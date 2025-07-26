@@ -83,12 +83,7 @@ function ChoiceId() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
     formData.append("audio", values.audio);
-    formData.append("message", "hello");
-    const [data, err] = await execute(formData);
-
-    if (err) {
-      return;
-    }
+    await execute(formData);
   }
 
   return (
@@ -134,7 +129,13 @@ function ChoiceId() {
       </MediaPlayer>
 
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit(onSubmit)(e);
+          }}
+          className="space-y-8"
+        >
           <FormField
             control={form.control}
             name="audio"
