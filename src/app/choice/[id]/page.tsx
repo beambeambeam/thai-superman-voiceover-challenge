@@ -15,12 +15,40 @@ import {
   MediaPlayerSeekBackward,
   MediaPlayerSeekForward,
   MediaPlayerVolume,
+  MediaPlayerTime, // <-- add this import
 } from "@/components/ui/media-player";
 import Image from "next/image";
+import React, { useState, useRef } from "react";
 
 function ChoiceId() {
   const params = useParams<{ id: string }>();
   const choice = CHOICE.find((c) => c.id === params.id);
+
+  // Add replay state
+  const [replayCount, setReplayCount] = useState(0);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  // Handler for when audio ends
+  const handleEnded = () => {
+    setReplayCount((prev) => {
+      const next = prev + 1;
+      if (next >= 3) {
+        setIsDisabled(true);
+      }
+      return next;
+    });
+  };
+
+  // Handler for play: prevent play if disabled
+  const handlePlay = (e: React.SyntheticEvent) => {
+    if (isDisabled) {
+      e.preventDefault();
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    }
+  };
 
   if (!choice) {
     return (
@@ -45,18 +73,29 @@ function ChoiceId() {
         className="h-auto w-auto max-w-xs max-h-64"
       />
 
-      <MediaPlayer className="h-20 w-full">
-        <MediaPlayerAudio className="sr-only">
+      <div>{replayCount}/3</div>
+
+      <MediaPlayer className="h-20 w-full" onEnded={handleEnded}>
+        <MediaPlayerAudio
+          className="sr-only"
+          ref={audioRef}
+          onPlay={handlePlay}
+        >
           <source src={choice.mp3} type="audio/mp3" />
         </MediaPlayerAudio>
         <MediaPlayerControls className="flex-col items-start gap-2.5">
           <MediaPlayerSeek withTime />
           <div className="flex w-full items-center justify-center gap-2">
-            <MediaPlayerPlay />
+            <MediaPlayerPlay disabled={isDisabled} />
             <MediaPlayerVolume />
           </div>
         </MediaPlayerControls>
       </MediaPlayer>
+      {isDisabled && (
+        <div className="text-red-500 mt-2">
+          You have reached the maximum number of replays.
+        </div>
+      )}
     </div>
   );
 }
