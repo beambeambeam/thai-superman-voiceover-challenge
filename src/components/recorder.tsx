@@ -223,24 +223,16 @@ const Recorder: React.FC<RecorderProps> = ({
       />
 
       <div className="flex gap-2 items-center justify-center">
-        {isRecording ? (
+        {!isRecording && (
           <Button
-            onClick={handleReset}
-            size={"icon"}
-            variant={"destructive"}
+            onClick={isRecording ? handleStop : handleStart}
+            size="icon"
             disabled={disabled}
+            variant={isRecording ? "ghost" : "outline"}
           >
-            <Trash size={15} />
+            <Mic2Icon />
           </Button>
-        ) : null}
-        <Button
-          onClick={isRecording ? handleStop : handleStart}
-          size={"icon"}
-          disabled={disabled}
-          variant={isRecording ? "ghost" : "outline"}
-        >
-          <Mic2Icon />
-        </Button>
+        )}
       </div>
 
       {file && audioUrl && (
