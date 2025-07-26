@@ -15,7 +15,7 @@ export const CHOICE: CHOICE[] = [
       "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6YdhZlogAaY0J4KN8G5XFjx6OmivSPUIBduDqHW1",
     lyrics: "ที่จะทำความดี",
     mp3: "https://1i39q4zekz.ufs.sh/f/zi7vM2Za6Ydhzi2qA0sa6YdhATJFIlj7Bq3NStZoeviakV0K",
-    time: 3000,
+    time: 1000,
   },
   {
     id: "2",
