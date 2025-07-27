@@ -134,7 +134,7 @@ function ChoiceId() {
           }}
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="font-bold text-foreground text-lg">
+            <span className="font-bold text-background text-lg">
               Hang tight, magic is happening ✨
             </span>
           </div>
@@ -157,6 +157,10 @@ function ChoiceId() {
                 className="whitespace-pre-wrap font-medium text-8xl text-white tracking-tighter"
                 value={data.score}
               />
+              / 100
+            </span>
+            <span className="font-bold text-background text-xl">
+              You earned a bonus of {data.bonus}! jub mua
             </span>
             <Link href="/choice">
               <Button effect="shineHover" variant="default">
