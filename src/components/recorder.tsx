@@ -1,14 +1,14 @@
+import { Mic2Icon, Trash } from 'lucide-react';
 import React, {
+  useCallback,
   useEffect,
   useMemo,
   useRef,
   useState,
-  useCallback,
-} from "react";
-import { useControllableState } from "../hooks/state";
-import { Button } from "@/components/ui/button";
-import { Mic2Icon, Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
+} from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { useControllableState } from '../hooks/state';
 
 interface RecorderProps {
   value?: File | null;
@@ -21,7 +21,7 @@ interface RecorderProps {
 }
 
 const padWithLeadingZeros = (num: number, length: number): string => {
-  return String(num).padStart(length, "0");
+  return String(num).padStart(length, '0');
 };
 
 const Recorder: React.FC<RecorderProps> = ({
@@ -52,15 +52,15 @@ const Recorder: React.FC<RecorderProps> = ({
   const minutes = Math.floor((timer % 3600) / 60);
   const seconds = timer % 60;
   const [hourLeft, hourRight] = useMemo(
-    () => padWithLeadingZeros(hours, 2).split(""),
+    () => padWithLeadingZeros(hours, 2).split(''),
     [hours]
   );
   const [minuteLeft, minuteRight] = useMemo(
-    () => padWithLeadingZeros(minutes, 2).split(""),
+    () => padWithLeadingZeros(minutes, 2).split(''),
     [minutes]
   );
   const [secondLeft, secondRight] = useMemo(
-    () => padWithLeadingZeros(seconds, 2).split(""),
+    () => padWithLeadingZeros(seconds, 2).split(''),
     [seconds]
   );
 
@@ -90,7 +90,7 @@ const Recorder: React.FC<RecorderProps> = ({
     cancelAnimationFrame(animationRef.current || 0);
     const canvas = canvasRef.current;
     if (canvas) {
-      const ctx = canvas.getContext("2d");
+      const ctx = canvas.getContext('2d');
       if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
   }, [setFile]);
@@ -113,15 +113,15 @@ const Recorder: React.FC<RecorderProps> = ({
       const source = audioCtx.createMediaStreamSource(stream);
       source.connect(analyser);
       mediaRecorderRef.current = { stream, analyser, audioContext: audioCtx };
-      const recorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
       setMediaRecorder(recorder);
       chunks.current = [];
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) chunks.current.push(e.data);
       };
       recorder.onstop = async () => {
-        const blob = new Blob(chunks.current, { type: "audio/webm" });
-        const file = new File([blob], "recording.webm", { type: "audio/webm" });
+        const blob = new Blob(chunks.current, { type: 'audio/webm' });
+        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
         setFile(file);
         setAudioUrl(URL.createObjectURL(blob));
       };
@@ -129,7 +129,7 @@ const Recorder: React.FC<RecorderProps> = ({
       setIsRecording(true);
       setTimer(0);
     } catch (err) {
-      alert("Microphone access denied or not available.");
+      alert('Microphone access denied or not available.');
     }
   }, [disabled, isRecording, setFile, handleReset]);
 
@@ -151,19 +151,19 @@ const Recorder: React.FC<RecorderProps> = ({
   useEffect(() => {
     if (!canvasRef.current) return;
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
+    const ctx = canvas.getContext('2d');
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
     const drawWaveform = (dataArray: Uint8Array) => {
       if (!ctx) return;
       ctx.clearRect(0, 0, WIDTH, HEIGHT);
-      ctx.fillStyle = "#939393";
+      ctx.fillStyle = '#939393';
       const barWidth = 1;
       const spacing = 1;
       const maxBarHeight = HEIGHT / 2.5;
       const numBars = Math.floor(WIDTH / (barWidth + spacing));
       for (let i = 0; i < numBars; i++) {
-        const barHeight = Math.pow(dataArray[i] / 128.0, 8) * maxBarHeight;
+        const barHeight = (dataArray[i] / 128.0) ** 8 * maxBarHeight;
         const x = (barWidth + spacing) * i;
         const y = HEIGHT / 2 - barHeight / 2;
         ctx.fillRect(x, y, barWidth, barHeight);
@@ -198,8 +198,8 @@ const Recorder: React.FC<RecorderProps> = ({
   return (
     <div
       className={cn(
-        "flex h-16 rounded-md relative w-full items-center justify-center gap-2",
-        { "border p-1": isRecording, "border-none p-0": !isRecording },
+        'relative flex h-16 w-full items-center justify-center gap-2 rounded-md',
+        { 'border p-1': isRecording, 'border-none p-0': !isRecording },
         className
       )}
     >
@@ -216,19 +216,19 @@ const Recorder: React.FC<RecorderProps> = ({
       ) : null}
 
       <canvas
-        ref={canvasRef}
         className={`h-full w-full bg-background ${
-          !isRecording ? "hidden" : "flex"
+          isRecording ? 'flex' : 'hidden'
         }`}
+        ref={canvasRef}
       />
 
-      <div className="flex gap-2 items-center justify-center">
+      <div className="flex items-center justify-center gap-2">
         {!isRecording && (
           <Button
+            disabled={disabled}
             onClick={isRecording ? handleStop : handleStart}
             size="icon"
-            disabled={disabled}
-            variant={isRecording ? "ghost" : "outline"}
+            variant={isRecording ? 'ghost' : 'outline'}
           >
             <Mic2Icon />
           </Button>
@@ -236,8 +236,10 @@ const Recorder: React.FC<RecorderProps> = ({
       </div>
 
       {file && audioUrl && (
-        <div className="w-fit flex justify-center">
-          <audio controls src={audioUrl} />
+        <div className="flex w-fit justify-center">
+          <audio controls src={audioUrl}>
+            <track kind="captions" label="English captions" srcLang="en" />
+          </audio>
         </div>
       )}
     </div>
@@ -265,7 +267,7 @@ const Timer = React.memo(
     return (
       <div
         className={cn(
-          "items-center justify-center gap-0.5 border p-1.5 rounded-md font-mono font-medium text-foreground flex",
+          'flex items-center justify-center gap-0.5 rounded-md border p-1.5 font-medium font-mono text-foreground',
           timerClassName
         )}
       >
@@ -293,6 +295,6 @@ const Timer = React.memo(
     );
   }
 );
-Timer.displayName = "Timer";
+Timer.displayName = 'Timer';
 
 export default Recorder;

@@ -1,5 +1,5 @@
-import { RateLimitError } from "./errors";
-import { getIp } from "./get-ip";
+import { RateLimitError } from './errors';
+import { getIp } from './get-ip';
 
 const PRUNE_INTERVAL = 60 * 1000;
 
@@ -24,9 +24,9 @@ function pruneTrackers() {
 setInterval(pruneTrackers, PRUNE_INTERVAL);
 
 export async function rateLimitByIp({
-  key = "global",
+  key = 'global',
   limit = 1,
-  window = 10000,
+  window = 10_000,
 }: {
   key?: string;
   limit?: number;
@@ -46,9 +46,9 @@ export async function rateLimitByIp({
 }
 
 export async function rateLimitByKey({
-  key = "global",
+  key = 'global',
   limit = 1,
-  window = 10000,
+  window = 10_000,
 }: {
   key?: string;
   limit?: number;

@@ -1,12 +1,12 @@
-import "server-only";
-import { headers } from "next/headers";
+import 'server-only';
+import { headers } from 'next/headers';
 
 export async function getIp() {
-  const forwardedFor = (await headers()).get("x-forwarded-for");
-  const realIp = (await headers()).get("x-real-ip");
+  const forwardedFor = (await headers()).get('x-forwarded-for');
+  const realIp = (await headers()).get('x-real-ip');
 
   if (forwardedFor) {
-    return forwardedFor.split(",")[0].trim();
+    return forwardedFor.split(',')[0].trim();
   }
 
   if (realIp) {
