@@ -1,4 +1,4 @@
-import { Mic2Icon, Trash } from 'lucide-react';
+import { Mic2Icon } from 'lucide-react';
 import React, {
   useCallback,
   useEffect,
@@ -74,38 +74,61 @@ const Recorder: React.FC<RecorderProps> = ({
     audioContext: null,
   });
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<any>(null);
+  const animationRef = useRef<number | null>(null);
+
+  const clearMediaResources = useCallback(() => {
+    const { stream, analyser, audioContext } = mediaRecorderRef.current;
+    if (analyser) {
+      analyser.disconnect();
+    }
+    if (stream) {
+      for (const track of stream.getTracks()) {
+        track.stop();
+      }
+    }
+    if (audioContext) {
+      audioContext.close();
+    }
+  }, []);
+
+  const clearCanvas = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  }, []);
 
   const handleReset = useCallback(() => {
     setFile(null);
     setAudioUrl(null);
     setIsRecording(false);
     setTimer(0);
-    if (timerTimeout.current) clearTimeout(timerTimeout.current);
-    // Stop audio context and stream
-    const { stream, analyser, audioContext } = mediaRecorderRef.current;
-    if (analyser) analyser.disconnect();
-    if (stream) stream.getTracks().forEach((track) => track.stop());
-    if (audioContext) audioContext.close();
-    cancelAnimationFrame(animationRef.current || 0);
-    const canvas = canvasRef.current;
-    if (canvas) {
-      const ctx = canvas.getContext('2d');
-      if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (timerTimeout.current) {
+      clearTimeout(timerTimeout.current);
     }
-  }, [setFile]);
+    clearMediaResources();
+    cancelAnimationFrame(animationRef.current || 0);
+    clearCanvas();
+  }, [setFile, clearMediaResources, clearCanvas]);
 
   const handleStop = useCallback(() => {
     if (mediaRecorder && isRecording) {
       mediaRecorder.stop();
       setIsRecording(false);
-      if (timerTimeout.current) clearTimeout(timerTimeout.current);
+      if (timerTimeout.current) {
+        clearTimeout(timerTimeout.current);
+      }
     }
   }, [mediaRecorder, isRecording]);
 
   const handleStart = useCallback(async () => {
     handleReset();
-    if (disabled || isRecording) return;
+    if (disabled || isRecording) {
+      return;
+    }
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const audioCtx = new window.AudioContext();
@@ -117,18 +140,22 @@ const Recorder: React.FC<RecorderProps> = ({
       setMediaRecorder(recorder);
       chunks.current = [];
       recorder.ondataavailable = (e) => {
-        if (e.data.size > 0) chunks.current.push(e.data);
+        if (e.data.size > 0) {
+          chunks.current.push(e.data);
+        }
       };
-      recorder.onstop = async () => {
+      recorder.onstop = () => {
         const blob = new Blob(chunks.current, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
-        setFile(file);
+        const recordedFile = new File([blob], 'recording.webm', {
+          type: 'audio/webm',
+        });
+        setFile(recordedFile);
         setAudioUrl(URL.createObjectURL(blob));
       };
       recorder.start();
       setIsRecording(true);
       setTimer(0);
-    } catch (err) {
+    } catch {
       alert('Microphone access denied or not available.');
     }
   }, [disabled, isRecording, setFile, handleReset]);
@@ -144,18 +171,24 @@ const Recorder: React.FC<RecorderProps> = ({
       }, 1000);
     }
     return () => {
-      if (timerTimeout.current) clearTimeout(timerTimeout.current);
+      if (timerTimeout.current) {
+        clearTimeout(timerTimeout.current);
+      }
     };
   }, [isRecording, timer, timeLimit, handleStop]);
 
   useEffect(() => {
-    if (!canvasRef.current) return;
+    if (!canvasRef.current) {
+      return;
+    }
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     const WIDTH = canvas.width;
     const HEIGHT = canvas.height;
     const drawWaveform = (dataArray: Uint8Array) => {
-      if (!ctx) return;
+      if (!ctx) {
+        return;
+      }
       ctx.clearRect(0, 0, WIDTH, HEIGHT);
       ctx.fillStyle = '#939393';
       const barWidth = 1;
@@ -170,7 +203,9 @@ const Recorder: React.FC<RecorderProps> = ({
       }
     };
     const visualizeVolume = () => {
-      if (!mediaRecorderRef.current?.stream) return;
+      if (!mediaRecorderRef.current?.stream) {
+        return;
+      }
       const sampleRate = 1024;
       const dataArray = new Uint8Array(sampleRate);
       const draw = () => {
@@ -187,7 +222,9 @@ const Recorder: React.FC<RecorderProps> = ({
     if (isRecording) {
       visualizeVolume();
     } else {
-      if (ctx) ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      if (ctx) {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+      }
       cancelAnimationFrame(animationRef.current || 0);
     }
     return () => {

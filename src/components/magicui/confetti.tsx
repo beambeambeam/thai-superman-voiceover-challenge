@@ -49,7 +49,9 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
   const canvasRef = useCallback(
     (node: HTMLCanvasElement) => {
       if (node !== null) {
-        if (instanceRef.current) return;
+        if (instanceRef.current) {
+          return;
+        }
         instanceRef.current = confetti.create(node, {
           ...globalOptions,
           resize: true,
@@ -66,9 +68,7 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
     async (opts = {}) => {
       try {
         await instanceRef.current?.({ ...options, ...opts });
-      } catch (error) {
-        console.error('Confetti error:', error);
-      }
+      } catch (_error) {}
     },
     [options]
   );
@@ -87,9 +87,7 @@ const ConfettiComponent = forwardRef<ConfettiRef, Props>((props, ref) => {
       (async () => {
         try {
           await fire();
-        } catch (error) {
-          console.error('Confetti effect error:', error);
-        }
+        } catch (_error) {}
       })();
     }
   }, [manualstart, fire]);
@@ -131,9 +129,7 @@ const ConfettiButtonComponent = ({
           y: y / window.innerHeight,
         },
       });
-    } catch (error) {
-      console.error('Confetti button error:', error);
-    }
+    } catch (_error) {}
   };
 
   return (

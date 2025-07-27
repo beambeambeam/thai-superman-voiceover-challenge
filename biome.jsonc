@@ -1,4 +1,14 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
-  "extends": ["ultracite"]
+  "extends": ["ultracite"],
+  "linter": {
+    "rules": {
+      "performance": {
+        "noNamespaceImport": "off"
+      }
+    }
+  },
+  "files": {
+    "includes": ["**", "!src/components/ui/media-player.tsx"]
+  }
 }
