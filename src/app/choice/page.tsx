@@ -1,19 +1,19 @@
-import { CHOICE } from "@/app/choice/choice";
-import { Button } from "@/components/ui/button";
-import { ChevronLeftIcon } from "lucide-react";
-import Link from "next/link";
+import { ChevronLeftIcon } from 'lucide-react';
+import Link from 'next/link';
+import { CHOICE } from '@/app/choice/choice';
+import { Button } from '@/components/ui/button';
 
 function Choice() {
   return (
-    <div className="flex items-center justify-center w-full h-full flex-col gap-2">
-      <h1 className="text-3xl font-bold">Choose the challenge</h1>
+    <div className="flex h-full w-full flex-col items-center justify-center gap-2">
+      <h1 className="font-bold text-3xl">Choose the challenge</h1>
       {CHOICE.map((c) => (
         <Link href={`/choice/${c.id}`} key={c.id}>
           <Button effect="shineHover">{c.label}</Button>
         </Link>
       ))}
       <Link href="/">
-        <Button size="icon" variant="ghost" effect="ringHover">
+        <Button effect="ringHover" size="icon" variant="ghost">
           <ChevronLeftIcon />
         </Button>
       </Link>

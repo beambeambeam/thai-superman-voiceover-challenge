@@ -1,9 +1,22 @@
-"use client";
+'use client';
 
-import { CHOICE } from "@/app/choice/choice";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { useParams } from "next/navigation";
+import { zodResolver } from '@hookform/resolvers/zod';
+import confetti from 'canvas-confetti';
+import { ChevronLeftIcon } from 'lucide-react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import type React from 'react';
+import { useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import z from 'zod';
+import { useServerAction } from 'zsa-react';
+import { calculateVoiceSim } from '@/app/choice/[id]/action';
+import { CHOICE } from '@/app/choice/choice';
+import { NumberTicker } from '@/components/magicui/number-ticker';
+import Recorder from '@/components/recorder';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import {
   MediaPlayer,
   MediaPlayerAudio,
@@ -11,23 +24,7 @@ import {
   MediaPlayerPlay,
   MediaPlayerSeek,
   MediaPlayerVolume,
-} from "@/components/ui/media-player";
-import Image from "next/image";
-
-import React, { useState, useRef } from "react";
-import z from "zod";
-
-import { Form, FormControl, FormField, FormItem } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-
-import { useServerAction } from "zsa-react";
-import { calculateVoiceSim } from "@/app/choice/[id]/action";
-import Recorder from "@/components/recorder";
-import { ChevronLeftIcon } from "lucide-react";
-import confetti from "canvas-confetti";
-import { NumberTicker } from "@/components/magicui/number-ticker";
+} from '@/components/ui/media-player';
 
 const formSchema = z.object({
   audio: z.instanceof(File),
@@ -108,8 +105,8 @@ function ChoiceId() {
 
   if (!choice) {
     return (
-      <div className="h-screen w-screen flex items-center justify-center flex-col gap-2">
-        <span className="text-destructive text-4xl">Not found</span>
+      <div className="flex h-screen w-screen flex-col items-center justify-center gap-2">
+        <span className="text-4xl text-destructive">Not found</span>
         <Link href="/choice">
           <Button>Go back</Button>
         </Link>
@@ -119,25 +116,25 @@ function ChoiceId() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
-    formData.append("audio", values.audio);
-    formData.append("id", params.id);
+    formData.append('audio', values.audio);
+    formData.append('id', params.id);
 
     await execute(formData);
   }
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center flex-col gap-2 relative">
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center gap-2">
       {isPending && (
         <div
-          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-sm"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center border border-border/40 border-solid bg-background/20 backdrop-blur-sm"
           style={{
-            borderRadius: "inherit",
-            boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
-            borderImage: "inherit",
+            borderRadius: 'inherit',
+            boxShadow: '0 0 0 2px rgba(0,0,0,0.08)',
+            borderImage: 'inherit',
           }}
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-foreground text-lg font-bold">
+            <span className="font-bold text-foreground text-lg">
               Hang tight, magic is happening ✨
             </span>
           </div>
@@ -146,23 +143,23 @@ function ChoiceId() {
 
       {data && (
         <div
-          className="bg-background/20 border-border/40 absolute inset-0 z-20 flex flex-col items-center justify-center border border-solid backdrop-blur-xs"
+          className="absolute inset-0 z-20 flex flex-col items-center justify-center border border-border/40 border-solid bg-background/20 backdrop-blur-xs"
           style={{
-            borderRadius: "inherit",
-            boxShadow: "0 0 0 2px rgba(0,0,0,0.08)",
-            borderImage: "inherit",
+            borderRadius: 'inherit',
+            boxShadow: '0 0 0 2px rgba(0,0,0,0.08)',
+            borderImage: 'inherit',
           }}
         >
           <div className="flex flex-col items-center gap-2">
-            <span className="text-lg font-bold text-background">
-              You got{" "}
+            <span className="font-bold text-background text-lg">
+              You got{' '}
               <NumberTicker
+                className="whitespace-pre-wrap font-medium text-8xl text-white tracking-tighter"
                 value={data.score}
-                className="whitespace-pre-wrap text-8xl font-medium tracking-tighter text-white"
               />
             </span>
             <Link href="/choice">
-              <Button variant="default" effect="shineHover">
+              <Button effect="shineHover" variant="default">
                 Checkout others challenge
               </Button>
             </Link>
@@ -170,30 +167,30 @@ function ChoiceId() {
         </div>
       )}
 
-      <div className="w-full max-w-[700px] flex items-center justify-center gap-2">
+      <div className="flex w-full max-w-[700px] items-center justify-center gap-2">
         <Link href="/choice">
-          <Button size="icon" variant="ghost" effect="ringHover">
+          <Button effect="ringHover" size="icon" variant="ghost">
             <ChevronLeftIcon />
           </Button>
         </Link>
-        <h1 className="text-3xl font-bold">{choice.label}</h1>
+        <h1 className="font-bold text-3xl">{choice.label}</h1>
       </div>
 
-      <div className="w-[90vw] max-w-[700px] relative aspect-video">
+      <div className="relative aspect-video w-[90vw] max-w-[700px]">
         <Image
-          src={choice.image}
           alt={choice.label}
-          fill
-          style={{ objectFit: "contain" }}
           className="h-auto w-auto"
+          fill
+          priority
           quality={100}
           sizes="(max-width: 900px) 99vw, 700px"
-          priority
+          src={choice.image}
+          style={{ objectFit: 'contain' }}
         />
       </div>
 
-      <div className="flex gap-2 items-center justify-center">
-        {replayCount}/3{" "}
+      <div className="flex items-center justify-center gap-2">
+        {replayCount}/3{' '}
         {isDisabled && (
           <div className="text-destructive">
             You have reached the maximum number of replays.
@@ -201,7 +198,7 @@ function ChoiceId() {
         )}
       </div>
 
-      <div className="bg-accent p-4 text-2xl font-bold border-l-4 border-foreground italic">
+      <div className="border-foreground border-l-4 bg-accent p-4 font-bold text-2xl italic">
         {choice.lyrics}
       </div>
 
@@ -211,8 +208,8 @@ function ChoiceId() {
       >
         <MediaPlayerAudio
           className="sr-only"
-          ref={audioRef}
           onPlay={handlePlay}
+          ref={audioRef}
         >
           <source src={choice.mp3} type="audio/mp3" />
         </MediaPlayerAudio>
@@ -228,11 +225,11 @@ function ChoiceId() {
 
       <Form {...form}>
         <form
+          className="flex flex-col items-center justify-center"
           onSubmit={(e) => {
             e.preventDefault();
             form.handleSubmit(onSubmit)(e);
           }}
-          className="flex flex-col items-center justify-center"
         >
           <FormField
             control={form.control}
@@ -249,7 +246,7 @@ function ChoiceId() {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={!form.formState.isValid}>
+          <Button disabled={!form.formState.isValid} type="submit">
             Submit
           </Button>
         </form>

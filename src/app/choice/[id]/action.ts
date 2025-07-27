@@ -1,13 +1,20 @@
-"use server";
+'use server';
 
-import { CHOICE } from "@/app/choice/choice";
-import z, { number } from "zod";
-import { createServerAction } from "zsa";
+import z from 'zod';
+import { createServerAction } from 'zsa';
+import { CHOICE } from '@/app/choice/choice';
 
-// Helper function to get AudioContext with proper typing
+declare global {
+  var webkitAudioContext: typeof AudioContext | undefined;
+}
+
 const getAudioContext = (): AudioContext => {
   const AudioContextClass =
-    (globalThis as any).AudioContext || (globalThis as any).webkitAudioContext;
+    (globalThis.AudioContext as typeof AudioContext | undefined) ||
+    (globalThis.webkitAudioContext as typeof AudioContext | undefined);
+  if (!AudioContextClass) {
+    throw new Error('AudioContext is not supported in this environment');
+  }
   return new AudioContextClass();
 };
 
@@ -18,7 +25,7 @@ export const calculateVoiceSim = createServerAction()
       audio: z.instanceof(File),
     }),
     {
-      type: "formData",
+      type: 'formData',
     }
   )
   .output(
@@ -29,7 +36,7 @@ export const calculateVoiceSim = createServerAction()
   .handler(async ({ input }) => {
     const choice = CHOICE.find((c) => c.id === input.id);
     if (!choice) {
-      throw new Error("Choice not found");
+      throw new Error('Choice not found');
     }
 
     const score = await calculateAcousticSimilarity(input.audio, choice.mp3);
@@ -43,7 +50,9 @@ async function calculateAcousticSimilarity(
   uploadedAudio: File,
   referenceUrl?: string
 ): Promise<number> {
-  if (!referenceUrl) return 50; // neutral score if no reference
+  if (!referenceUrl) {
+    return 50; // neutral score if no reference
+  }
 
   try {
     const audioContext = getAudioContext();
@@ -103,13 +112,12 @@ async function calculateAcousticSimilarity(
 
     await audioContext.close();
     return Math.max(0, Math.min(100, acousticScore));
-  } catch (error) {
-    console.error("Acoustic similarity calculation failed:", error);
-    return 50; // neutral fallback score
+  } catch {
+    return 50;
   }
 }
 
-async function extractAudioFeatures(
+function extractAudioFeatures(
   audioBuffer: AudioBuffer,
   audioContext: AudioContext
 ) {
@@ -149,8 +157,8 @@ async function extractAudioFeatures(
 
 function calculateRMSEnergy(channelData: Float32Array): number {
   let sum = 0;
-  for (let i = 0; i < channelData.length; i++) {
-    sum += channelData[i] * channelData[i];
+  for (const sample of channelData) {
+    sum += sample * sample;
   }
   return Math.sqrt(sum / channelData.length);
 }
@@ -257,7 +265,9 @@ function calculateSpectralSimilarity(
   centroid1: number,
   centroid2: number
 ): number {
-  if (centroid1 === 0 || centroid2 === 0) return 50;
+  if (centroid1 === 0 || centroid2 === 0) {
+    return 50;
+  }
 
   const diff = Math.abs(centroid1 - centroid2);
   const maxCentroid = Math.max(centroid1, centroid2);
@@ -265,7 +275,9 @@ function calculateSpectralSimilarity(
 }
 
 function calculatePitchSimilarity(freq1: number, freq2: number): number {
-  if (freq1 === 0 || freq2 === 0) return 50; // neutral if pitch not detected
+  if (freq1 === 0 || freq2 === 0) {
+    return 50; // neutral if pitch not detected
+  }
 
   // Compare in log scale (musical intervals)
   const logRatio = Math.abs(Math.log2(freq1 / freq2));
